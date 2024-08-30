@@ -1,0 +1,33 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/assets/fonts/Direct-Bold.ttf",
+      "sha1": "dc73251bb82e99f51d9f892a890e705ee84c363f"
+    },
+    {
+      "path": "src/assets/fonts/Direct-BoldItalic.ttf",
+      "sha1": "eae43921b22f4bb13c72a000994f1e3c75fee778"
+    },
+    {
+      "path": "src/assets/fonts/Direct-Condensed.ttf",
+      "sha1": "7271c03dc3a734e5b07d6a32e53d3a0859f30e19"
+    },
+    {
+      "path": "src/assets/fonts/Direct-CondensedLight.ttf",
+      "sha1": "96a0b07de94335b5ad44cfe921035dc7e2c1ad4a"
+    },
+    {
+      "path": "src/assets/fonts/Direct-Italic.ttf",
+      "sha1": "0af4949abf2249a0aeb2dba4945e32da0fa0b0aa"
+    },
+    {
+      "path": "src/assets/fonts/Direct-Regular.ttf",
+      "sha1": "2905424674a3fdce8a65cdd8607850e2706fc502"
+    },
+    {
+      "path": "src/assets/fonts/Direct-SemiCondencedBold.ttf",
+      "sha1": "567983f5008c34499c9a26e2127e1170276a7187"
+    }
+  ]
+}
