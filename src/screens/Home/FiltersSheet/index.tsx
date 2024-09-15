@@ -21,7 +21,7 @@ import {
   AirlineOptions,
   StopOptions,
 } from '@components/index';
-import {DROP_DOWM, DROP_UP} from '@all-assets/svg';
+import {DROP_DOWM, DROP_UP, EDIT} from '@all-assets/svg';
 import {SvgXml} from 'react-native-svg';
 import {width} from '@utilities/resizeUtils';
 
@@ -365,6 +365,7 @@ const FiltersSheet: React.FC<FiltersSheetProps> = ({onClose}) => {
           <Button
             text="Reset"
             onPress={handleReset}
+            iconLeft={EDIT}
             variant="secondary"
             style={{backgroundColor: theme.SecondaryBtn, marginTop: 10}}
           />
