@@ -1,12 +1,35 @@
 // src/utilities/getFlightStats.ts
-import {FlightData, FilterData} from '../all-types/types';
-import {applyFilters} from './applyFilters';
-import {mockFlightData as flights} from './mockFlightData';
+
+import {FlightData, FilterData} from '../all-types/types'; // Import types for flight and filter data
+import {applyFilters} from './applyFilters'; // Function to apply filters to flight data
+import {mockFlightData as flights} from './mockFlightData'; // Mock flight data
 
 /**
- * Function to find the cheapest flight, calculate the average price, and return a flight with a price range.
- * @param {FilterData} filters - Filters to apply to the flight data.
- * @returns {Array<{id: string, title: string, subtitle: string, time: string,  filled: boolean, icon: string}>} - An array with the cheapest flight details, average price, and a flight with price range.
+ * This function processes flight data by applying filters, finding the cheapest flight,
+ * calculating the average price, and returning a flight that matches a given price range.
+ *
+ * It works with the `FlightData` type and filters the data based on the user's preferences,
+ * then calculates and returns the cheapest flight and a flight that fits within a specified price range.
+ *
+ * @param {FilterData} filters - The filters that will be applied to the flight data. This includes criteria like price range and other filters to narrow down the flight options.
+ * @returns {Array<{id: string, title: string, subtitle: string, time: string, status: boolean, icon: string, item: FlightData}>}
+ * - An array of objects containing the flight information, including the cheapest flight, average price flight,
+ * and flight that fits within the specified price range. Each object includes:
+ *   - `id`: A unique identifier for the result.
+ *   - `title`: A label describing the flight (e.g., 'Cheapest' or 'Our advice').
+ *   - `subtitle`: A string showing the price and currency for the flight.
+ *   - `time`: The departure time or a related metric for the flight.
+ *   - `status`: A boolean indicating if the flight is selected (default is `false`).
+ *   - `icon`: An icon identifier for the flight (default is an empty string).
+ *   - `item`: The flight data object, which contains detailed information such as departure time and price.
+ *
+ * @example
+ * const filters = {
+ *   priceRange: [100, 500],
+ *   // additional filter data (e.g., airlines, departure times) could be included here
+ * };
+ * const flightStats = getFlightStats(filters);
+ * console.log(flightStats); // Logs the cheapest flight and the flight within the price range
  */
 export const getFlightStats = (
   filters: FilterData,
@@ -19,7 +42,7 @@ export const getFlightStats = (
   icon: string;
   item: FlightData;
 }> => {
-  // Apply the filters to the flights
+  // Apply the filters to the flight data
   const filteredFlights = applyFilters(flights, filters);
 
   // If no flights match the filters, return an empty array
@@ -27,7 +50,7 @@ export const getFlightStats = (
     return [];
   }
 
-  // Find the cheapest flight
+  // Find the cheapest flight from the filtered flights
   const cheapestFlight = filteredFlights.reduce(
     (cheapestFlight, currentFlight) =>
       currentFlight.price < cheapestFlight.price
@@ -35,15 +58,15 @@ export const getFlightStats = (
         : cheapestFlight,
   );
 
-  // Find a flight that matches the price range (if any)
+  // Find a flight that matches the price range specified in the filters (if any)
   const priceRangeFlight =
     filteredFlights.find(
       flight =>
         flight.price >= filters.priceRange[0] &&
         flight.price <= filters.priceRange[1],
-    ) || filteredFlights[0]; // Fallback to the first flight if none match
+    ) || filteredFlights[0]; // Fallback to the first flight if none match the price range
 
-  // Return the result array with flight data
+  // Return an array with the flight stats, including the cheapest flight and a flight in the price range
   return [
     {
       id: 'cheapest_price',

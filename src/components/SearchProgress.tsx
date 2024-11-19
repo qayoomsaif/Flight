@@ -1,18 +1,40 @@
 // src/components/filters/SearchProgress.tsx
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
-import {Theme, useTheme} from '../theme/ThemeContext';
-import {Text} from '@components/index';
-import {width, wps} from '@utilities/resizeUtils';
-
+import {Theme, useTheme} from '../theme/ThemeContext'; 
+import {Text} from '@components/index'; 
+import {width, wps} from '@utilities/resizeUtils'; 
 interface SearchProgressProps {
+  /**
+   * The initial count value for the progress bar.
+   * This value will be displayed as the starting value of the countdown, and it will decrease over time.
+   * 
+   * @type {number}
+   * 
+   * @example
+   * <SearchProgress initialCount={100} />
+   */
   initialCount: number;
 }
 
+/**
+ * `SearchProgress` is a component that displays a progress bar that decreases over time.
+ * The component takes an initial count value and displays a countdown with a progress bar, 
+ * which visually represents the remaining time or progress in a search process.
+ *
+ * ## Usage:
+ * ```tsx
+ * <SearchProgress initialCount={100} />
+ * ```
+ * In the example above, the progress bar will start from 100% and decrement over time.
+ * 
+ * @param {SearchProgressProps} props - The properties passed to the component.
+ * @returns {React.FC<SearchProgressProps>} - The progress bar component.
+ */
 const SearchProgress: React.FC<SearchProgressProps> = ({initialCount}) => {
-  const {theme} = useTheme();
+  const {theme} = useTheme(); // Retrieve the current theme context.
 
-  const styles = getStyles(theme); 
+  const styles = getStyles(theme); // Get styles based on the current theme.
 
   return (
     <View style={styles.container}>
@@ -26,7 +48,6 @@ const SearchProgress: React.FC<SearchProgressProps> = ({initialCount}) => {
     </View>
   );
 };
-
 const getStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {

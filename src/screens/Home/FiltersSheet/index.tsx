@@ -25,16 +25,26 @@ import {DROP_DOWM, DROP_UP, EDIT} from '@all-assets/svg';
 import {SvgXml} from 'react-native-svg';
 import {width} from '@utilities/resizeUtils';
 
+/**
+ * Props for the FiltersSheet component.
+ */
 interface FiltersSheetProps {
-  onClose: () => void;
+  onClose: () => void; // Callback to close the filter sheet
 }
 
+/**
+ * FiltersSheet component to handle all flight filters.
+ * Allows users to apply or reset filters.
+ *
+ * @param onClose - Callback function to close the filter sheet
+ */
 const FiltersSheet: React.FC<FiltersSheetProps> = ({onClose}) => {
-  const {theme} = useTheme();
-  const dispatch = useDispatch();
-  const selectedFilters = useSelector((state: RootState) => state.filter);
-  const {data: filterData, isLoading, error} = useFilters();
+  const {theme} = useTheme(); // Access the theme context for styling
+  const dispatch = useDispatch(); // Dispatch actions to Redux
+  const selectedFilters = useSelector((state: RootState) => state.filter); // Get selected filters from Redux store
+  const {data: filterData, isLoading, error} = useFilters(); // Fetch filter data and manage loading state
 
+  // Local state for managing filters within the sheet
   const [localFilters, setLocalFilters] = useState(() => ({
     stops: selectedFilters.stops,
     airlines: selectedFilters.airlines,
@@ -46,15 +56,23 @@ const FiltersSheet: React.FC<FiltersSheetProps> = ({onClose}) => {
     arrival_airports: selectedFilters.arrival_airports,
   }));
 
-  const [openFilters, setOpenFilters] = useState<Set<string>>(new Set());
-  const styles = getStyles(theme);
+  const [openFilters, setOpenFilters] = useState<Set<string>>(new Set()); // Track which filters are expanded
+  const styles = getStyles(theme); // Generate dynamic styles based on the theme
 
+  // Update local filters when the selected filters in the Redux store change
   useEffect(() => {
     if (selectedFilters) {
       setLocalFilters(selectedFilters);
     }
   }, [selectedFilters]);
 
+  /**
+   * Handles selecting or deselecting an option for a filter.
+   *
+   * @param key - The key of the filter (e.g. 'stops', 'airlines')
+   * @param value - The value to be added or removed
+   * @param select - Optional flag to determine whether to add or remove the value
+   */
   const handleSelectOption = (
     key: keyof typeof localFilters,
     value: string,
@@ -63,57 +81,89 @@ const FiltersSheet: React.FC<FiltersSheetProps> = ({onClose}) => {
     setLocalFilters(prevFilters => ({
       ...prevFilters,
       [key]: select
-        ? [...(prevFilters[key] as string[]), value]
-        : (prevFilters[key] as string[]).filter(item => item !== value),
+        ? [...(prevFilters[key] as string[]), value] // Add the value if select is true
+        : (prevFilters[key] as string[]).filter(item => item !== value), // Remove the value if select is false
     }));
   };
 
+  /**
+   * Toggles the selection of all times for either departure or arrival.
+   *
+   * @param key - The key representing either 'departureTimes' or 'arrivalTimes'
+   */
   const handleToggleSelectAllTimes = (
     key: 'departureTimes' | 'arrivalTimes',
   ) => {
-    handleTimeChange(key, []);
+    handleTimeChange(key, []); // Clear all times for the given key
   };
 
+  /**
+   * Toggles the selection of all airports for either departure or arrival.
+   *
+   * @param key - The key representing either 'departure_airports' or 'arrival_airports'
+   * @param selectAll - Flag to determine if all airports should be selected or deselected
+   */
   const handleToggleSelectAll = (
     key: 'departure_airports' | 'arrival_airports',
     selectAll: boolean,
   ) => {
-    const allValues = filterData?.[key]?.map((item: any) => item.value) || [];
+    const allValues = filterData?.[key]?.map((item: any) => item.value) || []; // Get all airport values
     setLocalFilters(prevFilters => ({
       ...prevFilters,
-      [key]: selectAll ? allValues : [],
+      [key]: selectAll ? allValues : [], // Select all airports or deselect all
     }));
   };
 
+  /**
+   * Updates the price range filter with the selected values.
+   *
+   * @param values - An array representing the price range
+   */
   const handlePriceChange = (values: number[]) => {
     setLocalFilters(prevFilters => ({
       ...prevFilters,
-      priceRange: values,
+      priceRange: values, // Update price range with selected values
     }));
   };
 
+  /**
+   * Updates the departure or arrival times filter with the selected values.
+   *
+   * @param key - The key representing either 'departureTimes' or 'arrivalTimes'
+   * @param values - An array of selected times
+   */
   const handleTimeChange = (
     key: 'departureTimes' | 'arrivalTimes',
     values: number[],
   ) => {
     setLocalFilters(prevFilters => ({
       ...prevFilters,
-      [key]: values,
+      [key]: values, // Update the respective filter with the selected times
     }));
   };
 
+  /**
+   * Toggles the visibility of a filter (expand or collapse).
+   *
+   * @param filter - The filter key to toggle
+   */
   const toggleFilter = (filter: string) => {
     setOpenFilters(prev => {
       const newFilters = new Set(prev);
       if (newFilters.has(filter)) {
-        newFilters.delete(filter);
+        newFilters.delete(filter); // Collapse the filter
       } else {
-        newFilters.add(filter);
+        newFilters.add(filter); // Expand the filter
       }
       return newFilters;
     });
   };
 
+  /**
+   * A memoized component that renders individual filter options.
+   *
+   * @param filterKey - The key representing the specific filter (e.g. 'stops', 'airlines')
+   */
   const FilterItem = memo(({filterKey}: {filterKey: string}) => {
     const styles = getStyles(theme);
 
@@ -126,7 +176,7 @@ const FiltersSheet: React.FC<FiltersSheetProps> = ({onClose}) => {
               filterData?.stops.map((stop: any) => ({
                 key: stop.key,
                 value: stop.value,
-                selected: localFilters.stops.includes(stop.value),
+                selected: localFilters.stops.includes(stop.value), // Check if the stop option is selected
               })) || []
             }
             onSelectOption={handleSelectOption.bind(null, 'stops')}
@@ -160,7 +210,7 @@ const FiltersSheet: React.FC<FiltersSheetProps> = ({onClose}) => {
               values={
                 localFilters.departureTimes.length
                   ? localFilters.departureTimes
-                  : [0, 1439]
+                  : [0, 1439] // Set default value if no departure times are selected
               }
               onChange={values => handleTimeChange('departureTimes', values)}
               title="Departure Times"
@@ -174,7 +224,7 @@ const FiltersSheet: React.FC<FiltersSheetProps> = ({onClose}) => {
                 values={
                   localFilters.arrivalTimes.length
                     ? localFilters.arrivalTimes
-                    : [0, 1439]
+                    : [0, 1439] // Set default value if no arrival times are selected
                 }
                 onChange={values => handleTimeChange('arrivalTimes', values)}
                 title="Arrival Times"
@@ -287,6 +337,9 @@ const FiltersSheet: React.FC<FiltersSheetProps> = ({onClose}) => {
     );
   });
 
+  /**
+   * Handles applying the selected filters and dispatching the action to the Redux store.
+   */
   const handleReset = () => {
     const payload = {
       stops: [],
