@@ -1,4 +1,4 @@
-// src/screens/Home/index.tsx
+// src/screens/Details/index.tsx
 import React from 'react';
 import {
   View,
@@ -17,11 +17,19 @@ import {Text} from '@components/index';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Details'>;
 
+/**
+ * The `Details` component is responsible for displaying detailed information
+ * about a flight, such as departure and arrival details, price, duration, and baggage.
+ *
+ * @param route - The route props that contain the flight details.
+ * @param navigation - The navigation object to manage screen transitions.
+ */
 const Details: React.FC<Props> = ({route, navigation}) => {
-  const {theme} = useTheme();
-  const styles = getStyles(theme);
-  const {item} = route.params;
+  const {theme} = useTheme(); // Access theme context for styling
+  const styles = getStyles(theme); // Get dynamic styles based on the theme
+  const {item} = route.params; // Extract flight details from route parameters
 
+  // Destructure flight details from the passed `item`
   const {
     departureTime,
     stops,
@@ -43,6 +51,7 @@ const Details: React.FC<Props> = ({route, navigation}) => {
 
   return (
     <View style={styles.container}>
+      {/* Header component to show flight route and dates */}
       <Header
         fromCity={departureCity}
         toCity={arrivalCity}
@@ -51,23 +60,25 @@ const Details: React.FC<Props> = ({route, navigation}) => {
         centerIcon={ARROW_LEFT_RIGHT}
         rightIcon={EDIT}
         toDate={moment(arrivalDate).format('DD MMM, ddd')}
-        leftAction={() => navigation.goBack()}
-        rightAction={() => console.log('Edit Pressed')}
+        leftAction={() => navigation.goBack()} // Go back to the previous screen
+        rightAction={() => console.log('Edit Pressed')} // Placeholder for edit action
       />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.contentContainerStyle}>
         <View style={styles.card}>
+          {/* Flight Image */}
           <Image
             source={
               imageUrl
-                ? {uri: imageUrl}
-                : require('../../assets/images/logo.png')
+                ? {uri: imageUrl} // Use image URL if available
+                : require('../../assets/images/logo.png') // Default logo if no image URL
             }
             style={styles.image}
           />
           <Text style={styles.title}>{airline.key} Flight Details</Text>
           <View style={styles.infoContainer}>
+            {/* Display flight details in a series of `DetailItem` components */}
             <DetailItem label="Price" value={`${price} ${currency}`} />
             <DetailItem label="Duration" value={flightDuration} />
             <DetailItem label="Stops" value={stops?.name || 'Direct'} />
@@ -96,6 +107,7 @@ const Details: React.FC<Props> = ({route, navigation}) => {
             />
           </View>
         </View>
+        {/* Book Now Button */}
         <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}>Book Now</Text>
         </TouchableOpacity>
@@ -104,6 +116,12 @@ const Details: React.FC<Props> = ({route, navigation}) => {
   );
 };
 
+/**
+ * The `DetailItem` component displays a single piece of flight information.
+ *
+ * @param label - The label for the detail item (e.g., "Price", "Duration").
+ * @param value - The value for the detail item (e.g., "100 USD", "2 hours").
+ */
 const DetailItem = ({label, value}: {label: string; value: string}) => {
   const {theme} = useTheme();
   const styles = getStyles(theme);
@@ -116,6 +134,11 @@ const DetailItem = ({label, value}: {label: string; value: string}) => {
   );
 };
 
+/**
+ * Function to generate dynamic styles based on the current theme.
+ *
+ * @param theme - The current theme used for styling.
+ */
 const getStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
